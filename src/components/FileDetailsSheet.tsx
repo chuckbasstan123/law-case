@@ -87,7 +87,7 @@ const FileDetailsSheet: React.FC = () => {
               </Typography>
               <Typography level="title-sm">Location</Typography>
               <Typography level="body-sm" textColor="text.primary">
-                Travel pictures
+                Case 1
               </Typography>
               <Typography level="title-sm">Owner</Typography>
               <Typography level="body-sm" textColor="text.primary">

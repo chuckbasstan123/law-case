@@ -18,7 +18,7 @@ const FilesDisplaySheet: React.FC = () => {
   return (
     <CssVarsProvider>
       <CssBaseline />
-      
+
       {/* First Sheet for large screens */}
       <Sheet
         variant="outlined"
@@ -26,6 +26,7 @@ const FilesDisplaySheet: React.FC = () => {
           borderRadius: 'sm',
           gridColumn: '1/-1',
           display: { xs: 'none', md: 'flex' },
+          height: '100%', // Ensures full height on large screens
         }}
       >
         <TableFiles />
@@ -37,7 +38,8 @@ const FilesDisplaySheet: React.FC = () => {
         sx={{
           display: { xs: 'inherit', sm: 'none' },
           borderRadius: 'sm',
-          overflow: 'auto',
+          height: '100%', // Ensures full height on small screens
+          overflow: 'auto', // Allows scrolling if content overflows
           backgroundColor: 'background.surface',
           '& > *': {
             '&:nth-child(n):not(:nth-last-child(-n+4))': {
@@ -47,7 +49,14 @@ const FilesDisplaySheet: React.FC = () => {
           },
         }}
       >
-        <List size="sm" aria-labelledby="table-in-list">
+        <List
+          size="sm"
+          aria-labelledby="table-in-list"
+          sx={{
+            flex: 1, // Ensures the list fills the available space
+            overflow: 'auto', // Enables scrolling for the list
+          }}
+        >
           <ListItem>
             <ListItemButton variant="soft" sx={{ bgcolor: 'transparent' }}>
               <ListItemContent sx={{ p: 1 }}>
@@ -57,7 +66,7 @@ const FilesDisplaySheet: React.FC = () => {
                     startDecorator={<FolderRoundedIcon color="primary" />}
                     sx={{ alignItems: 'flex-start' }}
                   >
-                    Travel pictures
+                    Case 1
                   </Typography>
                   <AvatarGroup
                     size="sm"

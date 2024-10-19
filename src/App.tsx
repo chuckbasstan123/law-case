@@ -9,15 +9,21 @@ import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import Stack from '@mui/joy/Stack';
 
+import Chatbot from './components/Chatbot';
 import Layout from './components/Layout';
 import Navigation from './components/Navigation';
 import Header from './components/Header';
-import FileDetailsSheet from './components/FileDetailsSheet'; // Assuming the component is in the same directory
+import FileDetailsSheet from './components/FileDetailsSheet';
 import FilesDisplaySheet from './components/FilesDisplaySheet';
-import DocumentListWithAvatars from './components/DocumentListWithAvatars'
-import FileCard  from './components/FileCard';
+import DocumentListWithAvatars from './components/DocumentListWithAvatars';
+import FileCard from './components/FileCard';
+
 export default function FilesExample() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [navCollapsed, setNavCollapsed] = React.useState(false);
+
+  const toggleNav = () => setNavCollapsed((prev) => !prev);
+
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
@@ -26,6 +32,7 @@ export default function FilesExample() {
           <Navigation />
         </Layout.SideDrawer>
       )}
+
       <Stack
         id="tab-bar"
         direction="row"
@@ -78,14 +85,22 @@ export default function FilesExample() {
           Files
         </Button>
       </Stack>
+
       <Layout.Root
         sx={[
           {
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'minmax(64px, 200px) minmax(450px, 1fr)',
-              md: 'minmax(160px, 300px) minmax(600px, 1fr) minmax(300px, 420px)',
-            },
+            gridTemplateColumns: navCollapsed
+              ? {
+                  xs: '1fr',
+                  sm: '64px minmax(450px, 1fr)',
+                  md: '64px minmax(600px, 1fr) minmax(300px, 420px)',
+                }
+              : {
+                  xs: '1fr',
+                  sm: 'minmax(160px, 200px) minmax(450px, 1fr)',
+                  md: 'minmax(160px, 300px) minmax(600px, 1fr) minmax(300px, 420px)',
+                },
+            transition: 'grid-template-columns 0.3s ease',
           },
           drawerOpen && {
             height: '100vh',
@@ -96,25 +111,49 @@ export default function FilesExample() {
         <Layout.Header>
           <Header />
         </Layout.Header>
-        <Layout.SideNav>
+        <Layout.SideNav
+          sx={{
+            width: navCollapsed ? '64px' : '200px',
+            transition: 'width 0.3s ease',
+            overflow: 'hidden',
+          }}
+        >
+          <Button
+            variant="plain"
+            onClick={toggleNav}
+            sx={{ width: '100%', textAlign: 'left' }}
+          >
+            {navCollapsed ? 'Expand' : 'Collapse'}
+          </Button>
           <Navigation />
         </Layout.SideNav>
         <Layout.Main>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: 2,
-            }}
-          >
-            {' '}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gridTemplateRows: '1fr', // Ensure rows grow to fill available space
+            gap: 2, // Set a proper gap between items
+            height: '100%', // Make sure the box takes the full height
+          }}
+        >
             <FilesDisplaySheet />
-            <DocumentListWithAvatars />
-            <FileCard title="photos-travel.zip" size="132.2MB" dateAdded="27 Jun 2023" imageUrl="https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?w=400&h=400&auto=format" />
-            <FileCard title="hello-travel.zip" size="132.2MB" dateAdded="27 Jun 2023" imageUrl="https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=400&h=400&auto=format" />
+            {/* <DocumentListWithAvatars /> */}
+            {/* <FileCard
+              title="photos-travel.zip"
+              size="132.2MB"
+              dateAdded="27 Jun 2023"
+              imageUrl="https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?w=400&h=400&auto=format"
+            />
+            <FileCard
+              title="hello-travel.zip"
+              size="132.2MB"
+              dateAdded="27 Jun 2023"
+              imageUrl="https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=400&h=400&auto=format"
+            /> */}
           </Box>
         </Layout.Main>
-        <FileDetailsSheet />
+        <Chatbot />
       </Layout.Root>
     </CssVarsProvider>
   );

@@ -42,7 +42,7 @@ const DocumentListWithAvatars: React.FC = () => {
                         startDecorator={<FolderRoundedIcon color="primary" />}
                         sx={{ alignItems: 'flex-start' }}
                     >
-                        Travel pictures
+                        Case 1
                     </Typography>
                     <AvatarGroup
                         size="sm"

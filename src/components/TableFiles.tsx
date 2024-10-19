@@ -46,7 +46,7 @@ export default function TableFiles() {
                 startDecorator={<FolderRoundedIcon color="primary" />}
                 sx={{ alignItems: 'flex-start' }}
               >
-                Travel pictures
+                Case 1
               </Typography>
             </td>
             <td>
