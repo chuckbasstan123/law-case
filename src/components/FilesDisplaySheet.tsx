@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import List from '@mui/joy/List';
@@ -61,40 +62,53 @@ const FilesDisplaySheet: React.FC = () => {
     };
 
     // Avoid duplicate files when adding to folders during submission
+
     const handleSubmitFiles = async (folderName: string): Promise<void> => {
-    const filesToAdd = pendingFiles[folderName];
-    if (!filesToAdd || filesToAdd.length === 0) return;
+        const filesToAdd = pendingFiles[folderName];
+        if (!filesToAdd || filesToAdd.length === 0) return;
 
-    for (const file of filesToAdd) {
-        try {
-        await uploadToS3(file, userName, folderName); // Pass userName and folderName
-        console.log(`Uploaded ${file.name} successfully.`);
-        } catch (error) {
-        console.error(`Failed to upload ${file.name}:`, error);
-        }
-    }
-
-    // Add new files to the folder, ensuring no duplicates
-    setFolders(prevFolders =>
-        prevFolders.map(folder =>
-        folder.name === folderName
-            ? {
-                ...folder,
-                files: [...folder.files, ...filesToAdd.filter(
-                newFile => !folder.files.some(existingFile => existingFile.name === newFile.name)
-                )],
+        for (const file of filesToAdd) {
+            try {
+                await uploadToS3(file, userName, folderName); // Pass userName and folderName
+                console.log(`Uploaded ${file.name} successfully.`);
+            } catch (error) {
+                console.error(`Failed to upload ${file.name}:`, error);
             }
-            : folder
-        )
-    );
+        }
 
-    // Clear pending files for the folder after submission
-    setPendingFiles(prev => {
-        const updatedPendingFiles = { ...prev };
-        delete updatedPendingFiles[folderName];
-        return updatedPendingFiles;
-    });
+        // Add new files to the folder, ensuring no duplicates
+        setFolders(prevFolders =>
+            prevFolders.map(folder =>
+                folder.name === folderName
+                    ? {
+                        ...folder,
+                        files: [...folder.files, ...filesToAdd.filter(
+                            newFile => !folder.files.some(existingFile => existingFile.name === newFile.name)
+                        )],
+                    }
+                    : folder
+            )
+        );
+
+        // Clear pending files for the folder after submission
+        setPendingFiles(prev => {
+            const updatedPendingFiles = { ...prev };
+            delete updatedPendingFiles[folderName];
+            return updatedPendingFiles;
+        });
+
+        // Trigger processing job on localhost:5000
+        try {
+            const response = await axios.post('http://localhost:5000/process', {
+                userName,
+                folderName,
+            });
+            console.log('Triggered processing job:', response.data);
+        } catch (error) {
+            console.error('Failed to trigger processing job:', error);
+        }
     };
+
   
 
     // Function to toggle folder expansion
