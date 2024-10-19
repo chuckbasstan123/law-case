@@ -99,13 +99,16 @@ const FilesDisplaySheet: React.FC = () => {
 
         // Trigger processing job on localhost:5000
         try {
-            const response = await axios.post('http://localhost:5000/process', {
-                userName,
-                folderName,
+            const response = await axios.get('http://localhost:5000/create_chunks', {
+                params: {
+                    user_id: userName,   // Use `user_id` as expected by the backend
+                    folder_id: folderName // Use `folder_id` as expected by the backend
+                }
             });
             console.log('Triggered processing job:', response.data);
         } catch (error) {
-            console.error('Failed to trigger processing job:', error);
+            console.error('Failed to trigger processing job:');
+            console.error('Error');
         }
     };
 
