@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/joy/Box';
 import Sheet from '@mui/joy/Sheet';
 import List from '@mui/joy/List';
@@ -10,88 +10,144 @@ import Typography from '@mui/joy/Typography';
 import Avatar from '@mui/joy/Avatar';
 import AvatarGroup from '@mui/joy/AvatarGroup';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
-import TableFiles from './TableFiles'; // Assuming TableFiles is a separate component
+import Button from '@mui/joy/Button';
+import Modal from '@mui/joy/Modal';
+import Input from '@mui/joy/Input';
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
 
 const FilesDisplaySheet: React.FC = () => {
+  const [folders, setFolders] = useState<string[]>([
+    'Case 1',
+    'Important documents',
+    'Projects',
+    'Invoices',
+  ]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+
+  const handleCreateFolder = () => {
+    if (newFolderName.trim()) {
+      setFolders([...folders, newFolderName]);
+      setNewFolderName('');
+      setIsModalOpen(false);
+    }
+  };
+
   return (
     <CssVarsProvider>
       <CssBaseline />
-
-      {/* First Sheet for large screens */}
-      <Sheet
-        variant="outlined"
+      <Box
         sx={{
-          borderRadius: 'sm',
-          gridColumn: '1/-1',
-          display: { xs: 'none', md: 'flex' },
-          height: '100%', // Ensures full height on large screens
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <TableFiles />
-      </Sheet>
+        <Button
+          onClick={() => setIsModalOpen(true)}
+          sx={{ margin: '16px', alignSelf: 'flex-start' }}
+        >
+          Create New Folder
+        </Button>
 
-      {/* Second Sheet for small screens */}
-      <Sheet
-        variant="outlined"
-        sx={{
-          display: { xs: 'inherit', sm: 'none' },
-          borderRadius: 'sm',
-          height: '100%', // Ensures full height on small screens
-          overflow: 'auto', // Allows scrolling if content overflows
-          backgroundColor: 'background.surface',
-          '& > *': {
-            '&:nth-child(n):not(:nth-last-child(-n+4))': {
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-            },
-          },
-        }}
-      >
-        <List
-          size="sm"
-          aria-labelledby="table-in-list"
+        <Sheet
+          variant="outlined"
           sx={{
-            flex: 1, // Ensures the list fills the available space
-            overflow: 'auto', // Enables scrolling for the list
+            flex: 1,
+            overflow: 'auto',
+            borderRadius: 'sm',
+            backgroundColor: 'background.surface',
+            '& > *': {
+              '&:nth-child(n):not(:nth-last-child(-n+4))': {
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+              },
+            },
           }}
         >
-          <ListItem>
-            <ListItemButton variant="soft" sx={{ bgcolor: 'transparent' }}>
-              <ListItemContent sx={{ p: 1 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography
-                    level="title-sm"
-                    startDecorator={<FolderRoundedIcon color="primary" />}
-                    sx={{ alignItems: 'flex-start' }}
-                  >
-                    Case 1
-                  </Typography>
-                  <AvatarGroup
-                    size="sm"
-                    sx={{
-                      '--AvatarGroup-gap': '-8px',
-                      '--Avatar-size': '24px',
-                    }}
-                  >
-                    <Avatar src="https://i.pravatar.cc/24?img=6" />
-                    <Avatar src="https://i.pravatar.cc/24?img=7" />
-                    <Avatar src="https://i.pravatar.cc/24?img=8" />
-                    <Avatar src="https://i.pravatar.cc/24?img=9" />
-                  </AvatarGroup>
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                  <Typography level="body-sm">987.5MB</Typography>
-                  <Typography level="body-sm">21 Oct 2023, 3PM</Typography>
-                </Box>
-              </ListItemContent>
-            </ListItemButton>
-          </ListItem>
-          <ListDivider />
-          {/* Repeat similar ListItem structures for more files */}
-        </List>
-      </Sheet>
+          <List
+            size="sm"
+            aria-labelledby="table-in-list"
+            sx={{
+              flex: 1,
+              overflow: 'auto',
+            }}
+          >
+            {folders.map((folder, index) => (
+              <React.Fragment key={index}>
+                <ListItem>
+                  <ListItemButton variant="soft" sx={{ bgcolor: 'transparent' }}>
+                    <ListItemContent sx={{ p: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography
+                          level="title-sm"
+                          startDecorator={<FolderRoundedIcon color="primary" />}
+                          sx={{ alignItems: 'flex-start' }}
+                        >
+                          {folder}
+                        </Typography>
+                        <AvatarGroup
+                          size="sm"
+                          sx={{
+                            '--AvatarGroup-gap': '-8px',
+                            '--Avatar-size': '24px',
+                          }}
+                        >
+                          <Avatar src="https://i.pravatar.cc/24?img=1" />
+                          <Avatar src="https://i.pravatar.cc/24?img=2" />
+                        </AvatarGroup>
+                      </Box>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          mt: 2,
+                        }}
+                      >
+                        <Typography level="body-sm">Size: 100MB</Typography>
+                        <Typography level="body-sm">Created: Today</Typography>
+                      </Box>
+                    </ListItemContent>
+                  </ListItemButton>
+                </ListItem>
+                <ListDivider />
+              </React.Fragment>
+            ))}
+          </List>
+        </Sheet>
+
+        {/* Modal for Folder Creation */}
+        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <Sheet
+            variant="outlined"
+            sx={{
+              maxWidth: 400,
+              margin: 'auto',
+              padding: 3,
+              borderRadius: 'sm',
+              textAlign: 'center',
+            }}
+          >
+            <Typography component="h5" sx={{ marginBottom: 2 }}>
+                Create New Folder
+            </Typography>
+            <Input
+              placeholder="Enter folder name"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              sx={{ marginBottom: 2 }}
+            />
+            <Button
+              onClick={handleCreateFolder}
+              variant="soft"
+              sx={{ width: '100%' }}
+            >
+              Create
+            </Button>
+          </Sheet>
+        </Modal>
+      </Box>
     </CssVarsProvider>
   );
 };
